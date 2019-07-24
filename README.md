@@ -1,6 +1,6 @@
 # navspa
 
-[![Build Status](https://travis-ci.org/navikt/react-intl-bundler.svg?branch=master)](https://travis-ci.org/navikt/react-intl-bundler)
+[![CircleCI](https://circleci.com/gh/navikt/navspa/tree/master.svg?style=svg)](https://circleci.com/gh/navikt/navspa/tree/master)
 [![npm version](https://badge.fury.io/js/%40navikt%2Fnavspa.svg)](https://www.npmjs.com/package/@navikt/navspa)
 
 ## Inqueries
