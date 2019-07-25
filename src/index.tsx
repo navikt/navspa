@@ -27,12 +27,7 @@ export default class NAVSPA {
                 };
             }
 
-            public componentDidCatch(error: Error) {
-                this.setState({ hasError: true });
-                NAVSPA.logger.error(error);
-            }
-
-            public componentDidMount() {
+            private renderImportedComponent() {
                 try {
                     if (this.el) {
                         NAVSPA.scope[name](this.el, this.props);
@@ -40,6 +35,21 @@ export default class NAVSPA {
                 } catch (e) {
                     this.setState({ hasError: true });
                     NAVSPA.logger.error(e);
+                }
+            }
+
+            public componentDidCatch(error: Error) {
+                this.setState({ hasError: true });
+                NAVSPA.logger.error(error);
+            }
+
+            public componentDidMount() {
+                this.renderImportedComponent();
+            }
+
+            public componentDidUpdate(): void {
+                if (!this.state.hasError) {
+                    this.renderImportedComponent();
                 }
             }
 
