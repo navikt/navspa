@@ -5,6 +5,7 @@
   "repository": "github:navikt/navspa",
   "homepage": "https://github.com/navikt/navspa",
   "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "test": "jest",
