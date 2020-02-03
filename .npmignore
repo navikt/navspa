@@ -1,11 +1,10 @@
-node_modules/
+.github/
 .idea/
-dist/
-example/
+coverage/
+node_modules/
 src/
 test/
 
 .gitignore
-.travis.yml
 CODEOWNERS
 tsconfig.json
