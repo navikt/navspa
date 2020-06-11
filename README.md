@@ -44,7 +44,7 @@ function Wrapper() {
 
 
 ### Bruk med create-react-app
-Siden vi fjerner kallet til `ReactDOM.render` og heller kaller `NAVSPA.eksporter så må vi gjøre noen endringer i `public/index.html`
+Siden vi fjerner kallet til `ReactDOM.render` og heller kaller `NAVSPA.eksporter` så må vi gjøre noen endringer i `public/index.html`
 for å få utvikler-miljø til å fungere. Brukere kommer ikke til å komme direkte til noen av barne-appene, så endringer er kun for å 
 gjøre utvikling av løsningen enklere.
 
