@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Example</title>
+    <link rel="stylesheet" href="https://navikt.github.io/internarbeidsflatedecorator/v2.1/static/css/main.css" />
+    <script src="https://navikt.github.io/internarbeidsflatedecorator/v2.1/static/js/head.v2.min.js"></script>
+
+    <script type="application/javascript">
+        window['NAVSPA'] = window['NAVSPA'] || {};
+        window['NAVSPA-V2'] = window['NAVSPA-V2'] || {};
+
+        // Deprecated oppsett
+        window['NAVSPA'].oldapp = (element, props) => {
+            const header = document.createElement('h1');
+            header.textContent = `Hello ${props.appname} from old`;
+            element.appendChild(header);
+        }
+
+        // Nytt oppsett
+        window['NAVSPA-V2'].newapp = {
+            mount: (element, props) => {
+                const header = document.createElement('h1');
+                header.textContent = `Hello ${props.appname} from new`;
+                element.appendChild(header);
+            },
+            unmount: (element) => {
+                element.innerHTML = '';
+            }
+        }
+    </script>
+</head>
+<body>
+<div id="root"></div>
+</body>
+<script src="index.tsx"></script>
+</html>
