@@ -1,10 +1,18 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import * as Feilmelding from './feilmelding';
 
+interface DeprecatedNAVSPAScope {
+    [name: string]: DeprecatedNAVSPAApp;
+}
+type DeprecatedNAVSPAApp = (element: HTMLElement, props: any) => void;
 interface NAVSPAScope {
     [name: string]: NAVSPAApp;
 }
-type NAVSPAApp = (element: HTMLElement, props: any) => void;
+type NAVSPAApp = {
+    mount(element: HTMLElement, props: any): void;
+    unmount(element: HTMLElement): void;
+}
 type Frontendlogger = { error(e: Error): void; };
 type State = { hasError: boolean; };
 
@@ -13,9 +21,28 @@ export default class NAVSPA {
         NAVSPA.scope[name] = (element: HTMLElement, props: PROPS) => {
             ReactDOM.render(React.createElement(component, props), element);
         };
+        NAVSPA.scopeV2[name] = {
+            mount(element: HTMLElement, props: PROPS) {
+                ReactDOM.render(React.createElement(component, props), element);
+            },
+            unmount(element: HTMLElement) {
+                ReactDOM.unmountComponentAtNode(element);
+            }
+        }
     }
 
     public static importer<PROPS>(name: string): React.ComponentType<PROPS> {
+        let app: NAVSPAApp = NAVSPA.scopeV2[name];
+        if (!app) {
+            console.error(Feilmelding.v2Unmount(name))
+            app = {
+                mount: NAVSPA.scope[name],
+                unmount(element: HTMLElement) {
+                    ReactDOM.unmountComponentAtNode(element);
+                }
+            };
+        }
+
         class NAVSPAImporter extends React.Component<PROPS, State> {
 
             private el?: HTMLElement;
@@ -30,7 +57,7 @@ export default class NAVSPA {
             private renderImportedComponent() {
                 try {
                     if (this.el) {
-                        NAVSPA.scope[name](this.el, this.props);
+                        app.mount(this.el, this.props);
                     }
                 } catch (e) {
                     this.setState({ hasError: true });
@@ -55,7 +82,7 @@ export default class NAVSPA {
 
             public componentWillUnmount() {
                 if (this.el) {
-                    ReactDOM.unmountComponentAtNode(this.el);
+                    app.unmount(this.el);
                 }
             }
 
@@ -74,6 +101,7 @@ export default class NAVSPA {
         return NAVSPAImporter;
     }
 
-    private static scope: NAVSPAScope = (global as any)['NAVSPA'] = (global as any)['NAVSPA'] || {}; // tslint:disable-line
+    private static scope: DeprecatedNAVSPAScope = (global as any)['NAVSPA'] = (global as any)['NAVSPA'] || {}; // tslint:disable-line
+    private static scopeV2: NAVSPAScope = (global as any)['NAVSPA-V2'] = (global as any)['NAVSPA-V2'] || {}; // tslint:disable-line
     private static logger: Frontendlogger = (global as any).frontendlogger = (global as any).frontendlogger || { error() {} }; // tslint:disable-line
 }
