@@ -4,6 +4,8 @@ coverage/
 node_modules/
 src/
 test/
+.cache/
+example/
 
 .gitignore
 CODEOWNERS
