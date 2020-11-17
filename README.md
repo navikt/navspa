@@ -28,13 +28,32 @@ I parent-app kan man så gjøre følgende;
 ```typescript jsx
 import NAVSPA from '@navikt/navspa';
 const Child1 = NAVSPA.importer<ChildProps>('child1');
-const Child2 = NAVSPA.importer<ChildProps>('child2');
+const Child2 = NAVSPA.importer<ChildProps>('child2', 'wrapper-classname');
 
 function Wrapper() {
   return (
     <>
       <Child1 data="Data til child1" />
       <Child2 data="Data til child2" />
+    </>
+  );
+}
+```
+
+Det er også mulig å importere inn child applikasjoner asynkront ved bruk av `importerAsync`.
+Hvis en applikasjon importeres inn async så trengs det ikke å laste inn css/js gjennom tags i html-filen til parent-appen.
+Istedenfor så vil async-navspa lese asset-manifest.json og finne ut hvilken filer den trenger å hente derfra.
+Som default så må manifestet være på samme format som det som blir opprettet av CRA, men det er mulig å overskrive parsingen av manifestet ved behov.
+```typescript jsx
+import NAVSPA from '@navikt/navspa';
+const AsyncChild1 = NAVSPA.importerAsync<ChildProps>('child-1', 'https://url-to-microfrontend1.com/');
+const AsyncChild2 = NAVSPA.importerAsync<ChildProps>('child-2', 'https://url-to-microfrontend2.com/', 'wrapper-classname', (manifest: Object) => {/*...*/});
+
+function Wrapper() {
+  return (
+    <>
+        <AsyncChild1 data="Data til child1" />
+        <AsyncChild2 data="Data til child2" />
     </>
   );
 }

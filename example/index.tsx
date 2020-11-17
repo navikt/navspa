@@ -1,13 +1,16 @@
-
 import * as React from 'react';
 import { render } from 'react-dom';
-import NAVSPA from "../src/index";
+import { importer } from '../src/navspa';
+import { importerAsync } from '../src/async-navspa';
+
 interface DecoratorProps {
     appname: string;
 }
-const Dekorator = NAVSPA.importer<DecoratorProps>('internarbeidsflatefs');
-const OldApp = NAVSPA.importer<DecoratorProps>('oldapp');
-const NewApp = NAVSPA.importer<DecoratorProps>('newapp');
+
+const Dekorator = importer<DecoratorProps>('internarbeidsflatefs');
+const OldApp = importer<DecoratorProps>('oldapp');
+const NewApp = importer<DecoratorProps>('newapp');
+const AsyncApp = importerAsync('cra-test', 'http://localhost:5000');
 
 function App() {
     const [ mount, setMount ] = React.useState<boolean>(true);
@@ -17,7 +20,7 @@ function App() {
             { mount && <Dekorator appname="world" />}
             { mount && <OldApp appname="world" />}
             { mount && <NewApp appname="world" />}
-
+            { mount && <AsyncApp />}
             <button onClick={() => setMount((p) => !p)}>Toogle mount</button>
         </>
     );
