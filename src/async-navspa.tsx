@@ -50,7 +50,7 @@ function AsyncNavSpa<P = {}>(
 		if (loadjs.isDefined(loadJsAppName)) {
 			setAssetsLoaded();
 		} else {
-			fetch(joinPaths(appBaseUrl, 'asset-manifest.json'))
+			fetch(joinPaths(appBaseUrl, 'asset-manifest.json'), { mode: 'no-cors' })
 				.then(res => res.json())
 				.then(manifest => {
 					const pathsToLoad = assetManifestParser(manifest);
