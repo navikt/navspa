@@ -23,7 +23,7 @@ function extractPathsFromCRAManifest(manifestObject: ManifestObject): string[] {
 	const fileList = Object.entries(files).map(([name, path]) => ({name, path})) as {name: string, path: string}[];
 
 	entrypoints.forEach((entrypoint) => {
-		const matchingFile = fileList.find(file => file.path.includes(entrypoint));
+		const matchingFile = fileList.find(file => file.path.endsWith(entrypoint));
 
 		if (matchingFile) {
 			pathsToLoad.push(matchingFile.path);
