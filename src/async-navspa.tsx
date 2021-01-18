@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import loadjs from 'loadjs';
 import { importer } from './navspa';
-import { extractPathsFromCRAManifest, joinPaths, Object } from './utils';
+import { createAssetManifestParser, joinPaths } from './utils';
 
 enum AssetLoadState {
 	LOADING_ASSETS,
@@ -18,18 +18,36 @@ interface Props<P> {
 	appName: string;
 	appBaseUrl: string;
 	spaProps: P;
+	assetManifestParser: AssetManifestParser;
 	wrapperClassName?: string;
-	assetManifestParser?: (manifestObject: Object) => string[]; // Takes a parsed asset manifest and returns a list of all paths that must be loaded
+	loader?: React.ReactNode;
 }
 
-export function importerAsync<P>(appName: string, appBaseUrl: string, wrapperClassName?: string, assetManifestParser?: (manifestObject: Object) => string[]): React.FunctionComponent<P> {
+interface AsyncSpaConfig {
+	appName: string;
+	appBaseUrl: string;
+	assetManifestParser?: AssetManifestParser;
+	wrapperClassName?: string;
+	loader?: React.ReactNode;
+}
+
+export type ManifestObject = { [k: string]: any };
+
+// Takes a parsed asset manifest and returns a list of all URLs that must be loaded
+export type AssetManifestParser = (manifestObject: ManifestObject) => string[];
+
+const ASSET_MANIFEST_NAME = 'asset-manifest.json';
+
+
+export function importerAsync<P>(config: AsyncSpaConfig): React.FunctionComponent<P> {
 	return (props: P) => {
 		return (
 			<AsyncNavSpa
-				appName={appName}
-				appBaseUrl={appBaseUrl}
-				assetManifestParser={assetManifestParser}
-				wrapperClassName={wrapperClassName}
+				appName={config.appName}
+				appBaseUrl={config.appBaseUrl}
+				assetManifestParser={config.assetManifestParser || createAssetManifestParser(config.appBaseUrl)}
+				wrapperClassName={config.wrapperClassName}
+				loader={config.loader}
 				spaProps={props}
 			/>
 		);
@@ -37,7 +55,7 @@ export function importerAsync<P>(appName: string, appBaseUrl: string, wrapperCla
 }
 
 function AsyncNavSpa<P = {}>(
-	{appName, appBaseUrl, spaProps, wrapperClassName, assetManifestParser = extractPathsFromCRAManifest}: Props<P>
+	{appName, appBaseUrl, spaProps, wrapperClassName, assetManifestParser, loader }: Props<P>
 ): JSX.Element {
 	const loadJsAppName = `async_navspa_${appName}`;
 	const [loadState, setLoadState] = useState<LoadState<P>>({state: AssetLoadState.LOADING_ASSETS});
@@ -50,11 +68,10 @@ function AsyncNavSpa<P = {}>(
 		if (loadjs.isDefined(loadJsAppName)) {
 			setAssetsLoaded();
 		} else {
-			fetch(joinPaths(appBaseUrl, 'asset-manifest.json'))
+			fetch(joinPaths(appBaseUrl, ASSET_MANIFEST_NAME))
 				.then(res => res.json())
 				.then(manifest => {
-					const pathsToLoad = assetManifestParser(manifest);
-					const urlsToLoad = pathsToLoad.map(path => joinPaths(appBaseUrl, path));
+					const urlsToLoad = assetManifestParser(manifest);
 
 					loadjs(urlsToLoad, loadJsAppName, {
 						success: setAssetsLoaded,
@@ -66,7 +83,7 @@ function AsyncNavSpa<P = {}>(
 	}, []);
 
 	if (loadState.state === AssetLoadState.LOADING_ASSETS) {
-		return <></>;
+		return <>{loader}</>;
 	} else if (loadState.state === AssetLoadState.FAILED_TO_LOAD_ASSETS || !loadState.navSpa) {
 		return (
 			<div className="navspa--applikasjonsfeil">

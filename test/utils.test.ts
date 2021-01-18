@@ -1,4 +1,4 @@
-import { extractPathsFromCRAManifest, joinPaths } from '../src/utils';
+import { createAssetManifestParser, joinPaths } from '../src/utils';
 
 describe('joinPaths', () => {
 	it('should join url with path', () => {
@@ -35,10 +35,17 @@ describe('extractPathsFromCRAManifest', () => {
 			]
 		};
 
-		expect(extractPathsFromCRAManifest(testManifest)).toStrictEqual(["/veilarbdemo/static/css/main.css","/veilarbdemo/static/js/main.js"]);
+		const manifestUrls = createAssetManifestParser('http://localhost:1234')(testManifest);
+
+		const expectedUrls = [
+			'http://localhost:1234/veilarbdemo/static/css/main.css',
+			'http://localhost:1234/veilarbdemo/static/js/main.js'
+		];
+
+		expect(manifestUrls).toStrictEqual(expectedUrls);
 	})
 	it('should throw error for invalid manifest', () => {
-		const testManifest =  {};
-		expect(() => extractPathsFromCRAManifest(testManifest)).toThrow('Invalid manifest: {}');
+		const manifestParser = createAssetManifestParser('http://localhost:1234');
+		expect(() => manifestParser({})).toThrow('Invalid manifest: {}');
 	})
 });

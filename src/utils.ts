@@ -1,24 +1,34 @@
-export type Object = { [k: string]: any };
+import { AssetManifestParser, ManifestObject } from './async-navspa';
+
+export function createAssetManifestParser(appBaseUrl: string): AssetManifestParser {
+	return (manifestObject: ManifestObject) => {
+		const pathsToLoad = extractPathsFromCRAManifest(manifestObject);
+		return pathsToLoad.map(path => makeAbsolute(appBaseUrl, path));
+	};
+}
 
 /**
  * Extracts paths to load from a Create React App asset manifest.
  * @param manifestObject parsed json from the asset manifest
  */
-export function extractPathsFromCRAManifest(manifestObject: Object): string[] {
+function extractPathsFromCRAManifest(manifestObject: ManifestObject): string[] {
 	const pathsToLoad: string[] = [];
-	const unnecessaryFiles = ['runtime-main', 'service-worker', 'precache-manifest'];
 
-	if (typeof manifestObject.files !== 'object') {
+	const { files, entrypoints } = manifestObject as { files: {[name: string]: string}, entrypoints: string[] };
+
+	if ((files == null || typeof files !== 'object') || !Array.isArray(entrypoints)) {
 		throw new Error('Invalid manifest: ' + JSON.stringify(manifestObject));
 	}
 
-	Object.entries(manifestObject.files).forEach(([_, filePath]) => {
-		const path = filePath as string;
-		const isCssOrJs = path.endsWith('.js') || path.endsWith('.css');
-		const isUnnecessary = unnecessaryFiles.find(filePath => path.includes(filePath));
+	const fileList = Object.entries(files).map(([name, path]) => ({name, path})) as {name: string, path: string}[];
 
-		if (isCssOrJs && !isUnnecessary) {
-			pathsToLoad.push(path);
+	entrypoints.forEach((entrypoint) => {
+		const matchingFile = fileList.find(file => file.path.includes(entrypoint));
+
+		if (matchingFile) {
+			pathsToLoad.push(matchingFile.path);
+		} else {
+			console.warn('Fant ikke fil i asset-manifest for entrypoint ' + entrypoint);
 		}
 	});
 
@@ -46,4 +56,9 @@ export function joinPaths(...paths: string[]): string {
 
 		return cleanedPath;
 	}).filter(p => p != null).join('/');
+}
+
+function makeAbsolute(baseUrl: string, maybeAbsolutePath: string): string {
+	const isAbsoluteUrl = maybeAbsolutePath.startsWith('http');
+	return isAbsoluteUrl ? maybeAbsolutePath : joinPaths(baseUrl, maybeAbsolutePath);
 }
