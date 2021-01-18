@@ -18,8 +18,9 @@ interface Props<P> {
 	appName: string;
 	appBaseUrl: string;
 	spaProps: P;
-	wrapperClassName?: string;
 	assetManifestParser: AssetManifestParser;
+	wrapperClassName?: string;
+	loader?: React.ReactNode;
 }
 
 interface AsyncSpaConfig {
@@ -27,6 +28,7 @@ interface AsyncSpaConfig {
 	appBaseUrl: string;
 	assetManifestParser?: AssetManifestParser;
 	wrapperClassName?: string;
+	loader?: React.ReactNode;
 }
 
 export type ManifestObject = { [k: string]: any };
@@ -45,6 +47,7 @@ export function importerAsync<P>(config: AsyncSpaConfig): React.FunctionComponen
 				appBaseUrl={config.appBaseUrl}
 				assetManifestParser={config.assetManifestParser || createAssetManifestParser(config.appBaseUrl)}
 				wrapperClassName={config.wrapperClassName}
+				loader={config.loader}
 				spaProps={props}
 			/>
 		);
@@ -52,7 +55,7 @@ export function importerAsync<P>(config: AsyncSpaConfig): React.FunctionComponen
 }
 
 function AsyncNavSpa<P = {}>(
-	{appName, appBaseUrl, spaProps, wrapperClassName, assetManifestParser}: Props<P>
+	{appName, appBaseUrl, spaProps, wrapperClassName, assetManifestParser, loader }: Props<P>
 ): JSX.Element {
 	const loadJsAppName = `async_navspa_${appName}`;
 	const [loadState, setLoadState] = useState<LoadState<P>>({state: AssetLoadState.LOADING_ASSETS});
@@ -80,7 +83,7 @@ function AsyncNavSpa<P = {}>(
 	}, []);
 
 	if (loadState.state === AssetLoadState.LOADING_ASSETS) {
-		return <></>;
+		return <>{loader}</>;
 	} else if (loadState.state === AssetLoadState.FAILED_TO_LOAD_ASSETS || !loadState.navSpa) {
 		return (
 			<div className="navspa--applikasjonsfeil">

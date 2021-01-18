@@ -10,7 +10,11 @@ interface DecoratorProps {
 const Dekorator = importer<DecoratorProps>('internarbeidsflatefs');
 const OldApp = importer<DecoratorProps>('oldapp');
 const NewApp = importer<DecoratorProps>('newapp');
-const AsyncApp = importerAsync({appName: 'cra-test', appBaseUrl: 'http://localhost:5000'});
+const AsyncApp = importerAsync({
+    appName: 'cra-test',
+    appBaseUrl: 'http://localhost:5000',
+    loader: (<div>Laster...</div>)
+});
 
 function App() {
     const [ mount, setMount ] = React.useState<boolean>(true);
