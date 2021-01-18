@@ -45,7 +45,7 @@ describe('extractPathsFromCRAManifest', () => {
 		expect(manifestUrls).toStrictEqual(expectedUrls);
 	})
 	it('should throw error for invalid manifest', () => {
-		const manifestParser = createAssetManifestParser('');
+		const manifestParser = createAssetManifestParser('http://localhost:1234');
 		expect(() => manifestParser({})).toThrow('Invalid manifest: {}');
 	})
 });

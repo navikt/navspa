@@ -22,6 +22,13 @@ interface Props<P> {
 	assetManifestParser: AssetManifestParser;
 }
 
+interface AsyncSpaConfig {
+	appName: string;
+	appBaseUrl: string;
+	assetManifestParser?: AssetManifestParser;
+	wrapperClassName?: string;
+}
+
 export type ManifestObject = { [k: string]: any };
 
 // Takes a parsed asset manifest and returns a list of all URLs that must be loaded
@@ -30,14 +37,14 @@ export type AssetManifestParser = (manifestObject: ManifestObject) => string[];
 const ASSET_MANIFEST_NAME = 'asset-manifest.json';
 
 
-export function importerAsync<P>(appName: string, appBaseUrl: string, wrapperClassName?: string, assetManifestParser?: AssetManifestParser): React.FunctionComponent<P> {
+export function importerAsync<P>(config: AsyncSpaConfig): React.FunctionComponent<P> {
 	return (props: P) => {
 		return (
 			<AsyncNavSpa
-				appName={appName}
-				appBaseUrl={appBaseUrl}
-				assetManifestParser={assetManifestParser || createAssetManifestParser(appBaseUrl)}
-				wrapperClassName={wrapperClassName}
+				appName={config.appName}
+				appBaseUrl={config.appBaseUrl}
+				assetManifestParser={config.assetManifestParser || createAssetManifestParser(config.appBaseUrl)}
+				wrapperClassName={config.wrapperClassName}
 				spaProps={props}
 			/>
 		);
