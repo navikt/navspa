@@ -31,6 +31,12 @@ interface AsyncSpaConfig {
 	loader?: React.ReactNode;
 }
 
+interface PreloadConfig {
+	appName: string;
+	appBaseUrl: string;
+	assetManifestParser?: AssetManifestParser;
+}
+
 export type ManifestObject = { [k: string]: any };
 
 // Takes a parsed asset manifest and returns a list of all URLs that must be loaded
@@ -54,10 +60,29 @@ export function importerAsync<P>(config: AsyncSpaConfig): React.FunctionComponen
 	};
 }
 
+export function preloadAsync(config: PreloadConfig): void {
+	const loadJsBundleId = createLoadJsBundleId(config.appName);
+	const assetManifestParser = config.assetManifestParser || createAssetManifestParser(config.appBaseUrl);
+
+	fetchAssetUrls(config.appBaseUrl, assetManifestParser)
+		.then(urls => loadjs(urls, loadJsBundleId))
+		.catch((err) => console.warn('Failed to async preload ' + config.appName, err));
+}
+
+function fetchAssetUrls(appBaseUrl: string, assetManifestParser: AssetManifestParser): Promise<string[]> {
+	return fetch(joinPaths(appBaseUrl, ASSET_MANIFEST_NAME))
+		.then(res => res.json())
+		.then(manifest => assetManifestParser(manifest));
+}
+
+function createLoadJsBundleId(appName: string): string {
+	return `async_navspa_${appName}`;
+}
+
 function AsyncNavSpa<P = {}>(
 	{appName, appBaseUrl, spaProps, wrapperClassName, assetManifestParser, loader }: Props<P>
 ): JSX.Element {
-	const loadJsAppName = `async_navspa_${appName}`;
+	const loadJsBundleId = createLoadJsBundleId(appName);
 	const [loadState, setLoadState] = useState<LoadState<P>>({state: AssetLoadState.LOADING_ASSETS});
 
 	function setAssetsLoaded() {
@@ -65,20 +90,22 @@ function AsyncNavSpa<P = {}>(
 	}
 
 	useEffect(() => {
-		if (loadjs.isDefined(loadJsAppName)) {
+		if (loadjs.isDefined(loadJsBundleId)) {
 			setAssetsLoaded();
 		} else {
-			fetch(joinPaths(appBaseUrl, ASSET_MANIFEST_NAME))
-				.then(res => res.json())
-				.then(manifest => {
-					const urlsToLoad = assetManifestParser(manifest);
-
-					loadjs(urlsToLoad, loadJsAppName, {
-						success: setAssetsLoaded,
-						error: () => setLoadState({state: AssetLoadState.FAILED_TO_LOAD_ASSETS})
-					});
+			fetchAssetUrls(appBaseUrl, assetManifestParser)
+				.then(urls => {
+					// Since preload might be used, we need to check again if the assets were already loaded asynchronously
+					if (loadjs.isDefined(loadJsBundleId)) {
+						setAssetsLoaded();
+					} else {
+						loadjs(urls, loadJsBundleId, {
+							success: setAssetsLoaded,
+							error: () => setLoadState({state: AssetLoadState.FAILED_TO_LOAD_ASSETS})
+						});
+					}
 				})
-				.catch(() => setLoadState({state: AssetLoadState.FAILED_TO_LOAD_ASSETS}));
+				.catch(() => setLoadState({state: AssetLoadState.FAILED_TO_LOAD_ASSETS}))
 		}
 	}, []);
 
