@@ -44,6 +44,8 @@ export type AssetManifestParser = (manifestObject: ManifestObject) => string[];
 
 const ASSET_MANIFEST_NAME = 'asset-manifest.json';
 
+// Brukes for å holde oversikt over hvilke apper som har blitt lastet inn ferdig
+const loadedBundles: { [id: string]: boolean } = {};
 
 export function importerAsync<P>(config: AsyncSpaConfig): React.FunctionComponent<P> {
 	return (props: P) => {
@@ -61,11 +63,16 @@ export function importerAsync<P>(config: AsyncSpaConfig): React.FunctionComponen
 }
 
 export function preloadAsync(config: PreloadConfig): void {
-	const loadJsBundleId = createLoadJsBundleId(config.appName);
+	const bundleId = createBundleId(config.appName);
 	const assetManifestParser = config.assetManifestParser || createAssetManifestParser(config.appBaseUrl);
 
+	// Already loaded
+	if (bundleId in loadedBundles) return;
+
 	fetchAssetUrls(config.appBaseUrl, assetManifestParser)
-		.then(urls => loadjs(urls, loadJsBundleId))
+		.then(urls => loadjs(urls, bundleId, () => {
+			loadedBundles[bundleId] = true;
+		}))
 		.catch((err) => console.warn('Failed to async preload ' + config.appName, err));
 }
 
@@ -75,14 +82,14 @@ function fetchAssetUrls(appBaseUrl: string, assetManifestParser: AssetManifestPa
 		.then(manifest => assetManifestParser(manifest));
 }
 
-function createLoadJsBundleId(appName: string): string {
+function createBundleId(appName: string): string {
 	return `async_navspa_${appName}`;
 }
 
 function AsyncNavSpa<P = {}>(
 	{appName, appBaseUrl, spaProps, wrapperClassName, assetManifestParser, loader }: Props<P>
 ): JSX.Element {
-	const loadJsBundleId = createLoadJsBundleId(appName);
+	const bundleId = createBundleId(appName);
 	const [loadState, setLoadState] = useState<LoadState<P>>({state: AssetLoadState.LOADING_ASSETS});
 
 	function setAssetsLoaded() {
@@ -90,17 +97,20 @@ function AsyncNavSpa<P = {}>(
 	}
 
 	useEffect(() => {
-		if (loadjs.isDefined(loadJsBundleId)) {
+		if (bundleId in loadedBundles) {
 			setAssetsLoaded();
 		} else {
 			fetchAssetUrls(appBaseUrl, assetManifestParser)
 				.then(urls => {
 					// Since preload might be used, we need to check again if the assets were already loaded asynchronously
-					if (loadjs.isDefined(loadJsBundleId)) {
+					if (bundleId in loadedBundles) {
 						setAssetsLoaded();
 					} else {
-						loadjs(urls, loadJsBundleId, {
-							success: setAssetsLoaded,
+						loadjs(urls, bundleId, {
+							success: () => {
+								loadedBundles[bundleId] = true;
+								setAssetsLoaded();
+							},
 							error: () => setLoadState({state: AssetLoadState.FAILED_TO_LOAD_ASSETS})
 						});
 					}
