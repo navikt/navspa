@@ -16,14 +16,9 @@ type NAVSPAApp = {
 	mount(element: HTMLElement, props: any): void;
 	unmount(element: HTMLElement): void;
 }
-type Frontendlogger = { error(e: Error): void; };
 
 const scope: DeprecatedNAVSPAScope = (global as any)['NAVSPA'] = (global as any)['NAVSPA'] || {}; // tslint:disable-line
 const scopeV2: NAVSPAScope = (global as any)['NAVSPA-V2'] = (global as any)['NAVSPA-V2'] || {}; // tslint:disable-line
-const logger: Frontendlogger = (global as any).frontendlogger = (global as any).frontendlogger || {
-	error() {
-	}
-}; // tslint:disable-line
 
 export function eksporter<PROPS>(name: string, component: React.ComponentType<PROPS>) {
 	scope[name] = (element: HTMLElement, props: PROPS) => {
@@ -83,13 +78,13 @@ class NavSpa<P> extends React.Component<NavSpaWrapperProps<P>, NavSpaState> {
 			}
 		} catch (e) {
 			this.setState({hasError: true});
-			logger.error(e);
+			console.error(`Error while rendering NAVSPA ${this.props.navSpaName}`, e);
 		}
 	}
 
 	public componentDidCatch(error: Error) {
 		this.setState({hasError: true});
-		logger.error(error);
+		console.error(`Caught error for NAVSPA ${this.props.navSpaName}`, error);
 	}
 
 	public componentDidMount() {
