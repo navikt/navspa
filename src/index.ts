@@ -1,9 +1,10 @@
 import { importer, eksporter } from './navspa';
-import { importerAsync } from './async-navspa';
+import { importerAsync, preloadAsync } from './async-navspa';
 
 const NAVSPA = {
 	importer,
 	importerAsync,
+	preloadAsync,
 	eksporter,
 };
 
