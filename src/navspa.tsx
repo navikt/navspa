@@ -51,10 +51,11 @@ export function importer<P>(name: string, wrapperClassName?: string): React.Comp
 		};
 	}
 
-	return (props: P) => <NavSpa navSpaApp={app} navSpaProps={props} wrapperClassName={wrapperClassName}/>;
+	return (props: P) => <NavSpa navSpaApp={app} navSpaName={name} navSpaProps={props} wrapperClassName={wrapperClassName}/>;
 }
 
 interface NavSpaWrapperProps<P> {
+	navSpaName: string;
 	navSpaApp: NAVSPAApp
 	navSpaProps: P;
 	wrapperClassName?: string;
@@ -109,7 +110,7 @@ class NavSpa<P> extends React.Component<NavSpaWrapperProps<P>, NavSpaState> {
 
 	public render() {
 		if (this.state.hasError) {
-			return <div className="navspa--applikasjonsfeil">Feil i {name}</div>;
+			return <div className="navspa--applikasjonsfeil">Feil i {this.props.navSpaName}</div>;
 		}
 		return <div className={this.props.wrapperClassName} ref={this.saveRef}/>;
 	}
