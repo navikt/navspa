@@ -28,7 +28,7 @@ I parent-app kan man så gjøre følgende;
 ```typescript jsx
 import NAVSPA from '@navikt/navspa';
 const Child1 = NAVSPA.importer<ChildProps>('child1');
-const Child2 = NAVSPA.importer<ChildProps>('child2', 'wrapper-classname');
+const Child2 = NAVSPA.importer<ChildProps>('child2', 'wrapper-classname', (<div>Laster...</div>));
 
 function Wrapper() {
   return (

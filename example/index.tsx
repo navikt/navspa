@@ -11,6 +11,7 @@ interface DecoratorProps {
 const Dekorator = importer<DecoratorProps>('internarbeidsflatefs');
 const OldApp = importer<DecoratorProps>('oldapp');
 const NewApp = importer<DecoratorProps>('newapp');
+const LateApp = importer<DecoratorProps>('lateapp', undefined, (<div>Laster...</div>));
 
 const asyncConfig = {
 	appName: 'cra-test',
@@ -30,6 +31,20 @@ function App() {
 		setTimeout(() => {
 			setMountAsync(true);
 		}, 3000);
+
+		setTimeout(() => {
+			// @ts-ignore
+			window['NAVSPA-V2'].lateapp = {
+				mount: (element: HTMLElement, props: DecoratorProps) => {
+					const header = document.createElement('h1');
+					header.textContent = `Hello ${props.appname} from late app`;
+					element.appendChild(header);
+				},
+				unmount: (element: HTMLElement) => {
+					element.innerHTML = '';
+				}
+			}
+		}, 1000);
 	}, [])
 
 	return (
@@ -39,6 +54,7 @@ function App() {
 			{mount && <Dekorator appname="world"/>}
 			{mount && <OldApp appname="world"/>}
 			{mount && <NewApp appname="world"/>}
+			{mount && <LateApp appname="world"/>}
 			{mountAsync && mount && <AsyncApp/>}
 		</>
 	);

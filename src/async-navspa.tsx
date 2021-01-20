@@ -86,7 +86,7 @@ function AsyncNavSpa<P = {}>(
 	const [loadState, setLoadState] = useState<LoadState<P>>({state: AssetLoadState.LOADING_ASSETS});
 
 	function setAssetsLoaded() {
-		setLoadState({state: AssetLoadState.ASSETS_LOADED, navSpa: importer<P>(appName, wrapperClassName)});
+		setLoadState({state: AssetLoadState.ASSETS_LOADED, navSpa: importer<P>(appName, wrapperClassName, loader)});
 	}
 
 	useEffect(() => {
