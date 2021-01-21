@@ -1,12 +1,16 @@
 import { importer, eksporter } from './navspa';
-import { importerAsync, preloadAsync } from './async-navspa';
+import { importer as importerAsync, importerLazy, preload } from './async/async-navspa';
+export { AsyncSpaConfig } from './async/async-navspa';
 
-const NAVSPA = {
-	importer,
-	importerAsync,
-	preloadAsync,
-	eksporter,
+export const AsyncNavspa = {
+	importer: importerAsync,
+	importerLazy,
+	preload
 };
 
-export default NAVSPA;
+export const Navspa = {
+	importer,
+	eksporter
+};
 
+export default Navspa;

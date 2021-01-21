@@ -40,19 +40,19 @@ function Wrapper() {
 }
 ```
 
-Det er også mulig å importere inn child applikasjoner asynkront ved bruk av `importerAsync`.
+Det er også mulig å importere inn child applikasjoner asynkront ved bruk av `AsyncNavspa.importer`.
 Hvis en applikasjon importeres inn async så trengs det ikke å laste inn css/js gjennom tags i html-filen til parent-appen.
 Istedenfor så vil async-navspa lese asset-manifest.json og finne ut hvilken filer den trenger å hente derfra.
 Som default så må manifestet være på samme format som det som blir opprettet av CRA, men det er mulig å overskrive parsingen av manifestet ved behov.
 ```typescript jsx
-import NAVSPA from '@navikt/navspa';
+import { AsyncNavspa } from '@navikt/navspa';
 
-const AsyncChild1 = NAVSPA.importerAsync<ChildProps>({
+const AsyncChild1 = AsyncNavspa.importer<ChildProps>({
     appName: 'child-1',
     appBaseUrl: 'https://url-to-microfrontend1.com/'
 });
 
-const AsyncChild2 = NAVSPA.importerAsync<ChildProps>({
+const AsyncChild2 = AsyncNavspa.importer<ChildProps>({
     appName: 'child-2',
     appBaseUrl: 'https://url-to-microfrontend2.com/',
     assetManifestParser:  (manifest: { [k: string]: any }) => {/*...*/},
@@ -70,22 +70,24 @@ function Wrapper() {
 }
 ```
 
-Når man bruker `importerAsync` så starter innhentingen av ressursene når komponenten først mountes. 
+Når man bruker `AsyncNavspa.importer` så starter innhentingen av ressursene når komponenten først mountes. 
 Dette vil som regel kun medføre 1 kall for å hente asset-manifestet og 1 pr ressurs (er som regel cachet ganske bra).
-For å gjøre innlasting raskere så er det mulig å bruke `preloadAsync`. Da vil ressursene bli lastet inn asynkront slik at child appen kan rendres raskere.
+For å gjøre innlasting raskere så er det mulig å bruke `AsyncNavspa.preload`. 
+Da vil ressursene bli lastet inn asynkront slik at child appen kan rendres raskere.
 
 ```typescript jsx
-import NAVSPA from '@navikt/navspa';
+import { AsyncNavspa } from '@navikt/navspa';
 
 const config: AsyncSpaConfig = {
     appName: 'child-1',
-    appBaseUrl: 'https://url-to-microfrontend1.com/'
+    appBaseUrl: 'https://url-to-microfrontend1.com/',
+    loader: <div>loading</div>
 }
 
 // Do the preloading somewhere before child-1 needs to be rendered
-NAVSPA.preloadAsync(config);
+AsyncNavspa.preload(config);
 
-const AsyncChild1 = NAVSPA.importerAsync<ChildProps>(config);
+const AsyncChild1 = AsyncNavspa.importer<ChildProps>(config);
 
 function Wrapper() {
   return (

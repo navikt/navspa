@@ -16,14 +16,9 @@ type NAVSPAApp = {
 	mount(element: HTMLElement, props: any): void;
 	unmount(element: HTMLElement): void;
 }
-type Frontendlogger = { error(e: Error): void; };
 
 const scope: DeprecatedNAVSPAScope = (global as any)['NAVSPA'] = (global as any)['NAVSPA'] || {}; // tslint:disable-line
 const scopeV2: NAVSPAScope = (global as any)['NAVSPA-V2'] = (global as any)['NAVSPA-V2'] || {}; // tslint:disable-line
-const logger: Frontendlogger = (global as any).frontendlogger = (global as any).frontendlogger || {
-	error() {
-	}
-}; // tslint:disable-line
 
 export function eksporter<PROPS>(name: string, component: React.ComponentType<PROPS>) {
 	scope[name] = (element: HTMLElement, props: PROPS) => {
@@ -51,11 +46,12 @@ export function importer<P>(name: string, wrapperClassName?: string): React.Comp
 		};
 	}
 
-	return (props: P) => <NavSpa navSpaApp={app} navSpaProps={props} wrapperClassName={wrapperClassName}/>;
+	return (props: P) => <NavSpa name={name} navSpaApp={app} navSpaProps={props} wrapperClassName={wrapperClassName}/>;
 }
 
 interface NavSpaWrapperProps<P> {
-	navSpaApp: NAVSPAApp
+	name: string;
+	navSpaApp: NAVSPAApp;
 	navSpaProps: P;
 	wrapperClassName?: string;
 }
@@ -82,13 +78,13 @@ class NavSpa<P> extends React.Component<NavSpaWrapperProps<P>, NavSpaState> {
 			}
 		} catch (e) {
 			this.setState({hasError: true});
-			logger.error(e);
+			console.error(e);
 		}
 	}
 
 	public componentDidCatch(error: Error) {
 		this.setState({hasError: true});
-		logger.error(error);
+		console.error(error);
 	}
 
 	public componentDidMount() {
@@ -109,7 +105,7 @@ class NavSpa<P> extends React.Component<NavSpaWrapperProps<P>, NavSpaState> {
 
 	public render() {
 		if (this.state.hasError) {
-			return <div className="navspa--applikasjonsfeil">Feil i {name}</div>;
+			return <div className="navspa--applikasjonsfeil">Feil i {this.props.name}</div>;
 		}
 		return <div className={this.props.wrapperClassName} ref={this.saveRef}/>;
 	}

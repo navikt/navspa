@@ -20,8 +20,8 @@
   "author": "NAV",
   "license": "MIT",
   "peerDependencies": {
-    "react": "*",
-    "react-dom": "*"
+    "react": ">=16.6.0",
+    "react-dom": ">=16.6.0"
   },
   "devDependencies": {
     "@types/jest": "^26.0.5",
