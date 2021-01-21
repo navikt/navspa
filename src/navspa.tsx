@@ -17,8 +17,8 @@ type NAVSPAApp = {
 	unmount(element: HTMLElement): void;
 }
 
-const scope: DeprecatedNAVSPAScope = (global as any)['NAVSPA'] = (global as any)['NAVSPA'] || {}; // tslint:disable-line
-const scopeV2: NAVSPAScope = (global as any)['NAVSPA-V2'] = (global as any)['NAVSPA-V2'] || {}; // tslint:disable-line
+export const scope: DeprecatedNAVSPAScope = (global as any)['NAVSPA'] = (global as any)['NAVSPA'] || {}; // tslint:disable-line
+export const scopeV2: NAVSPAScope = (global as any)['NAVSPA-V2'] = (global as any)['NAVSPA-V2'] || {}; // tslint:disable-line
 
 export function eksporter<PROPS>(name: string, component: React.ComponentType<PROPS>) {
 	scope[name] = (element: HTMLElement, props: PROPS) => {

@@ -1,7 +1,8 @@
 import React, {ReactNode} from "react";
 import loadjs from 'loadjs';
 import {createAssetManifestParser, joinPaths} from "./utils";
-import {importer as importerSync} from '../navspa'
+import {importer as importerSync, scope, scopeV2 } from '../navspa'
+import {asyncLoadingOfDefinedApp} from "../feilmelding";
 
 
 const ASSET_MANIFEST_NAME = 'asset-manifest.json';
@@ -34,6 +35,9 @@ async function loadAssets(config: PreloadConfig): Promise<void> {
     const assetManifestParser = config.assetManifestParser || createAssetManifestParser(config.appBaseUrl);
 
     if (!loadjs.isDefined(loadJsBundleId)) {
+        if (process.env.NODE_ENV === 'development' && (scope[config.appName] || scopeV2[config.appName])) {
+            console.warn(asyncLoadingOfDefinedApp(config.appName))
+        }
         const assets: string[] = await fetchAssetUrls(config.appBaseUrl, assetManifestParser)
         if (!loadjs.isDefined(loadJsBundleId)) {
             await loadjs(assets, loadJsBundleId, {returnPromise: true})
