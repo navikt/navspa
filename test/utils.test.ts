@@ -1,4 +1,4 @@
-import { createAssetManifestParser, joinPaths } from '../src/utils';
+import { createAssetManifestParser, joinPaths } from '../src/async/utils';
 
 describe('joinPaths', () => {
 	it('should join url with path', () => {

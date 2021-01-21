@@ -1,31 +1,29 @@
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import { render } from 'react-dom';
-import { importer } from '../src/navspa';
-import { importerAsync, preloadAsync } from '../src/async-navspa';
-import { useEffect } from 'react';
+import { Navspa, AsyncNavspa, AsyncSpaConfig } from '../src';
 
 interface DecoratorProps {
 	appname: string;
 }
 
-const Dekorator = importer<DecoratorProps>('internarbeidsflatefs');
-const OldApp = importer<DecoratorProps>('oldapp');
-const NewApp = importer<DecoratorProps>('newapp');
+const Dekorator = Navspa.importer<DecoratorProps>('internarbeidsflatefs');
+const OldApp = Navspa.importer<DecoratorProps>('oldapp');
+const NewApp = Navspa.importer<DecoratorProps>('newapp');
 
-const asyncConfig = {
+const asyncConfig: AsyncSpaConfig = {
 	appName: 'cra-test',
 	appBaseUrl: 'http://localhost:5000',
 	loader: (<div>Laster...</div>)
 };
 
-const AsyncApp = importerAsync(asyncConfig);
+const AsyncApp = AsyncNavspa.importer(asyncConfig);
 
 function App() {
 	const [mount, setMount] = React.useState<boolean>(true);
 	const [mountAsync, setMountAsync] = React.useState<boolean>(false);
 
 	useEffect(() => {
-		preloadAsync(asyncConfig);
+		AsyncNavspa.preload(asyncConfig);
 
 		setTimeout(() => {
 			setMountAsync(true);
