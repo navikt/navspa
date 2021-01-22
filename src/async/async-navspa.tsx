@@ -30,19 +30,20 @@ function fetchAssetUrls(appBaseUrl: string, assetManifestParser: AssetManifestPa
         .then(manifest => assetManifestParser(manifest));
 }
 
-async function loadAssets(config: PreloadConfig): Promise<void> {
+const loadingStatus: { [key: string]: Promise<void> } = {};
+function loadAssets(config: PreloadConfig): Promise<void> {
     const loadJsBundleId = createLoadJsBundleId(config.appName);
-    const assetManifestParser = config.assetManifestParser || createAssetManifestParser(config.appBaseUrl);
-
-    if (!loadjs.isDefined(loadJsBundleId)) {
+    if (!loadingStatus[loadJsBundleId]) {
         if (process.env.NODE_ENV === 'development' && (scope[config.appName] || scopeV2[config.appName])) {
             console.warn(asyncLoadingOfDefinedApp(config.appName))
         }
-        const assets: string[] = await fetchAssetUrls(config.appBaseUrl, assetManifestParser)
-        if (!loadjs.isDefined(loadJsBundleId)) {
-            await loadjs(assets, loadJsBundleId, {returnPromise: true})
-        }
+
+        const assetManifestParser = config.assetManifestParser || createAssetManifestParser(config.appBaseUrl);
+        loadingStatus[loadJsBundleId] = fetchAssetUrls(config.appBaseUrl, assetManifestParser)
+                .then((assets) => loadjs(assets, loadJsBundleId, {returnPromise: true}))
     }
+
+    return loadingStatus[loadJsBundleId];
 }
 
 export function preload(config: PreloadConfig) {
