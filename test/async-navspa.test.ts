@@ -1,6 +1,6 @@
 import 'isomorphic-fetch';
-import { fetchAssetUrls } from './async-navspa';
-import { microfrontend, withAssetManifestAt, withCurrentLocation } from "../test.utils";
+import { fetchAssetUrls } from '../src/async/async-navspa';
+import { microfrontend, withAssetManifestAt, withCurrentLocation } from "./test.utils";
 
 describe('async-navspa', () => {
     it('loadAssets from app from different origin', (done) => {

@@ -1,6 +1,6 @@
 import FetchMock from "yet-another-fetch-mock";
-import {ManifestObject} from "./async/async-navspa";
-import {createAssetManifestParser} from "./async/utils";
+import {ManifestObject} from "../src/async/async-navspa";
+import {createAssetManifestParser} from "../src/async/utils";
 
 export async function withCurrentLocation(url: string, assertion: () => void) {
     const original = window.location;
