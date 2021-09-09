@@ -63,8 +63,8 @@ export function makeAbsolute(baseUrl: string, maybeAbsolutePath: string): string
 		return maybeAbsolutePath;
 	} else if (baseUrl.startsWith('http')) {
 		const url = new URL(baseUrl);
-		return `${url.origin}${maybeAbsolutePath}`;
+		return joinPaths(url.origin, maybeAbsolutePath);
 	} else {
-		return `${window.location.origin}${maybeAbsolutePath}`;
+		return joinPaths(window.location.origin, maybeAbsolutePath);
 	}
 }

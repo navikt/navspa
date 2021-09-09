@@ -58,10 +58,30 @@ describe('makeAbsolute', () => {
 			.toBe('http://nav.no/appnavn/main.js')
 	});
 
-	it('should use current domain is path is relative', () => {
+	it('should use current domain is path is relative', (done) => {
 		withCurrentLocation('http://container.app/appname', () => {
 			expect(Utils.makeAbsolute('/podlet-app', '/podlet-app/static/js/main.js'))
-				.toBe('http://container.app/podlet-app/static/js/main.js')
+				.toBe('http://container.app/podlet-app/static/js/main.js');
+
+			done();
+		});
+	});
+
+	it('should prevent duplicate slashes', (done) => {
+		withCurrentLocation('http://container.app/appname/', () => {
+			expect(Utils.makeAbsolute('http://container.app/appname/', '/podlet-app/static/js/main.js'))
+				.toBe('http://container.app/podlet-app/static/js/main.js');
+
+			done();
+		});
+	});
+
+	it('should ensure slashe before asset-path', (done) => {
+		withCurrentLocation('http://container.app/appname', () => {
+			expect(Utils.makeAbsolute('appname', 'podlet-app/static/js/main.js'))
+				.toBe('http://container.app/podlet-app/static/js/main.js');
+
+			done()
 		});
 	});
 });
