@@ -9,11 +9,21 @@ interface DecoratorProps {
 const Dekorator = Navspa.importer<DecoratorProps>('internarbeidsflatefs');
 const OldApp = Navspa.importer<DecoratorProps>('oldapp');
 const NewApp = Navspa.importer<DecoratorProps>('newapp');
+const ErrorApp = Navspa.importer<DecoratorProps>('errorapp', {
+	// feilmelding: null
+	// feilmelding: 'bare en string er lov'
+	feilmelding: <h1>Stor statisk feilmelding</h1>
+});
 
 const asyncConfig: AsyncSpaConfig = {
 	appName: 'cra-test',
 	appBaseUrl: 'http://localhost:5000',
-	loader: (<div>Laster...</div>)
+	loader: (<div>Laster...</div>),
+	config: {
+		// feilmelding: null
+		// feilmelding: 'Kunne ikke laste inn cra-test'
+		feilmelding: <h1>Kunne ikke laste inn cra-test</h1>
+	}
 };
 
 const AsyncApp = AsyncNavspa.importer(asyncConfig);
@@ -38,6 +48,7 @@ function App() {
 			{mount && <OldApp appname="world"/>}
 			{mount && <NewApp appname="world"/>}
 			{mountAsync && mount && <AsyncApp/>}
+			<ErrorApp />
 		</>
 	);
 }
