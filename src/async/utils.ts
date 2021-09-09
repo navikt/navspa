@@ -58,7 +58,13 @@ export function joinPaths(...paths: string[]): string {
 	}).filter(p => p != null).join('/');
 }
 
-function makeAbsolute(baseUrl: string, maybeAbsolutePath: string): string {
-	const isAbsoluteUrl = maybeAbsolutePath.startsWith('http');
-	return isAbsoluteUrl ? maybeAbsolutePath : joinPaths(baseUrl, maybeAbsolutePath);
+export function makeAbsolute(baseUrl: string, maybeAbsolutePath: string): string {
+	if (maybeAbsolutePath.startsWith('http')) {
+		return maybeAbsolutePath;
+	} else if (baseUrl.startsWith('http')) {
+		const url = new URL(baseUrl);
+		return `${url.origin}${maybeAbsolutePath}`;
+	} else {
+		return `${window.location.origin}${maybeAbsolutePath}`;
+	}
 }
