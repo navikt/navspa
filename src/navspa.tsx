@@ -12,6 +12,11 @@ interface NAVSPAScope {
 	[name: string]: NAVSPAApp;
 }
 
+export interface NAVSPAAppConfig {
+	wrapperClassName?: string;
+	feilmelding?: React.ReactNode;
+}
+
 type NAVSPAApp = {
 	mount(element: HTMLElement, props: any): void;
 	unmount(element: HTMLElement): void;
@@ -34,7 +39,12 @@ export function eksporter<PROPS>(name: string, component: React.ComponentType<PR
 	}
 }
 
-export function importer<P>(name: string, wrapperClassName?: string): React.ComponentType<P> {
+export function importer<P>(name: string, config?: NAVSPAAppConfig): React.ComponentType<P> {
+	const appconfig: NAVSPAAppConfig = {
+		...(config ?? {}),
+		feilmelding: config?.feilmelding === undefined ? <>Feil i {name}</> : config?.feilmelding
+	}
+
 	let app: NAVSPAApp = scopeV2[name];
 	if (!app) {
 		console.error(Feilmelding.v2Unmount(name))
@@ -46,14 +56,14 @@ export function importer<P>(name: string, wrapperClassName?: string): React.Comp
 		};
 	}
 
-	return (props: P) => <NavSpa name={name} navSpaApp={app} navSpaProps={props} wrapperClassName={wrapperClassName}/>;
+	return (props: P) => <NavSpa name={name} navSpaApp={app} navSpaProps={props} config={appconfig} />;
 }
 
 interface NavSpaWrapperProps<P> {
 	name: string;
 	navSpaApp: NAVSPAApp;
 	navSpaProps: P;
-	wrapperClassName?: string;
+	config: NAVSPAAppConfig;
 }
 
 interface NavSpaState {
@@ -105,9 +115,9 @@ class NavSpa<P> extends React.Component<NavSpaWrapperProps<P>, NavSpaState> {
 
 	public render() {
 		if (this.state.hasError) {
-			return <div className="navspa--applikasjonsfeil">Feil i {this.props.name}</div>;
+			return <div className="navspa--applikasjonsfeil">{this.props.config.feilmelding}</div>;
 		}
-		return <div className={this.props.wrapperClassName} ref={this.saveRef}/>;
+		return <div className={this.props.config.wrapperClassName} ref={this.saveRef}/>;
 	}
 
 	private saveRef = (mountPoint: HTMLDivElement) => {
