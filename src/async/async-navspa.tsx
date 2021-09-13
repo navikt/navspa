@@ -31,7 +31,7 @@ export function fetchAssetUrls(appBaseUrl: string, assetManifestParser: AssetMan
 }
 
 const loadingStatus: { [key: string]: Promise<void> } = {};
-function loadAssets(config: PreloadConfig): Promise<void> {
+export function loadAssets(config: PreloadConfig): Promise<void> {
     const loadJsBundleId = createLoadJsBundleId(config.appName);
     if (!loadingStatus[loadJsBundleId]) {
         if (process.env.NODE_ENV === 'development' && (scope[config.appName] || scopeV2[config.appName])) {

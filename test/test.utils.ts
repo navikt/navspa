@@ -10,14 +10,14 @@ export async function withCurrentLocation(url: string, assertion: () => void) {
     window.location = original;
 }
 
-export async function withAssetManifestAt(
+export async function withFetchMock(
     url: string,
-    manifest: ManifestObject,
+    data: object,
     assertion: () => void
 ) {
     const mock = FetchMock.configure({ enableFallback: false });
     mock.get(url, (req, res, ctx) => res(
-        ctx.json(manifest)
+        ctx.json(data)
     ));
     await assertion();
     mock.restore();
