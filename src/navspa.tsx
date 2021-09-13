@@ -47,7 +47,11 @@ export function importer<P>(name: string, config?: NAVSPAAppConfig): React.Compo
 
 	let app: NAVSPAApp = scopeV2[name];
 	if (!app) {
-		console.error(Feilmelding.v2Unmount(name))
+		if (scope[name]) {
+			console.error(Feilmelding.v2Unmount(name));
+		} else {
+			console.error(Feilmelding.ukjentApp(name));
+		}
 		app = {
 			mount: scope[name],
 			unmount(element: HTMLElement) {
