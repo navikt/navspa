@@ -24,7 +24,7 @@ function createLoadJsBundleId(appName: string): string {
     return `async_navspa_${appName}`;
 }
 
-function fetchAssetUrls(appBaseUrl: string, assetManifestParser: AssetManifestParser): Promise<string[]> {
+export function fetchAssetUrls(appBaseUrl: string, assetManifestParser: AssetManifestParser): Promise<string[]> {
     return fetch(joinPaths(appBaseUrl, ASSET_MANIFEST_NAME))
         .then(res => res.json())
         .then(manifest => assetManifestParser(manifest));
