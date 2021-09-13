@@ -20,6 +20,7 @@
         // Nytt oppsett
         window['NAVSPA-V2'].newapp = {
             mount: (element, props) => {
+                element.innerHTML = '';
                 const header = document.createElement('h1');
                 header.textContent = `Hello ${props.appname} from new`;
                 element.appendChild(header);

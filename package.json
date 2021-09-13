@@ -37,7 +37,7 @@
     "react-dom": "^16.14.0",
     "serve": "^11.3.2",
     "ts-jest": "^26.1.3",
-    "typescript": "^3.5.3",
+    "typescript": "^3.9.9",
     "yet-another-fetch-mock": "^4.1.0"
   },
   "jest": {
