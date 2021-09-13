@@ -24,6 +24,7 @@
     "react-dom": ">=16.6.0"
   },
   "devDependencies": {
+    "@testing-library/react": "^12.1.0",
     "@types/jest": "^26.0.5",
     "@types/loadjs": "^4.0.0",
     "@types/node": "^12.6.8",
