@@ -1,7 +1,7 @@
 import React, {ReactNode} from "react";
 import loadjs from 'loadjs';
 import {createAssetManifestParser, joinPaths} from "./utils";
-import {importer as importerSync, scope, scopeV2 } from '../navspa'
+import {importer as importerSync, NAVSPAAppConfig, scope, scopeV2} from '../navspa'
 import {asyncLoadingOfDefinedApp} from "../feilmelding";
 
 
@@ -16,7 +16,7 @@ export interface PreloadConfig {
 }
 
 export interface AsyncSpaConfig extends PreloadConfig {
-    wrapperClassName?: string;
+    config?: NAVSPAAppConfig;
     loader?: NonNullable<ReactNode>;
 }
 
@@ -24,14 +24,14 @@ function createLoadJsBundleId(appName: string): string {
     return `async_navspa_${appName}`;
 }
 
-function fetchAssetUrls(appBaseUrl: string, assetManifestParser: AssetManifestParser): Promise<string[]> {
+export function fetchAssetUrls(appBaseUrl: string, assetManifestParser: AssetManifestParser): Promise<string[]> {
     return fetch(joinPaths(appBaseUrl, ASSET_MANIFEST_NAME))
         .then(res => res.json())
         .then(manifest => assetManifestParser(manifest));
 }
 
 const loadingStatus: { [key: string]: Promise<void> } = {};
-function loadAssets(config: PreloadConfig): Promise<void> {
+export function loadAssets(config: PreloadConfig): Promise<void> {
     const loadJsBundleId = createLoadJsBundleId(config.appName);
     if (!loadingStatus[loadJsBundleId]) {
         if (process.env.NODE_ENV === 'development' && (scope[config.appName] || scopeV2[config.appName])) {
@@ -54,7 +54,7 @@ export function preload(config: PreloadConfig) {
 export function importerLazy<P>(config: AsyncSpaConfig): Promise<{ default: React.ComponentType<P> }> {
     return loadAssets(config)
         .catch(console.error)
-        .then(() => ({ default: importerSync<P>(config.appName, config.wrapperClassName) }));
+        .then(() => ({ default: importerSync<P>(config.appName, config.config) }));
 }
 
 export function importer<P>(config: AsyncSpaConfig): React.ComponentType<P> {

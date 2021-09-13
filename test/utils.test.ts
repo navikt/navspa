@@ -1,4 +1,6 @@
 import { createAssetManifestParser, joinPaths } from '../src/async/utils';
+import * as Utils from "../src/async/utils";
+import {withCurrentLocation} from "./test.utils";
 
 describe('joinPaths', () => {
 	it('should join url with path', () => {
@@ -48,4 +50,38 @@ describe('extractPathsFromCRAManifest', () => {
 		const manifestParser = createAssetManifestParser('http://localhost:1234');
 		expect(() => manifestParser({})).toThrow('Invalid manifest: {}');
 	})
+});
+
+describe('makeAbsolute', () => {
+	it('should append manifest-path to baseUrl-domain', () => {
+		expect(Utils.makeAbsolute('http://nav.no/appnavn', '/appnavn/main.js'))
+			.toBe('http://nav.no/appnavn/main.js')
+	});
+
+	it('should use current domain is path is relative', (done) => {
+		withCurrentLocation('http://container.app/appname', () => {
+			expect(Utils.makeAbsolute('/podlet-app', '/podlet-app/static/js/main.js'))
+				.toBe('http://container.app/podlet-app/static/js/main.js');
+
+			done();
+		});
+	});
+
+	it('should prevent duplicate slashes', (done) => {
+		withCurrentLocation('http://container.app/appname/', () => {
+			expect(Utils.makeAbsolute('http://container.app/appname/', '/podlet-app/static/js/main.js'))
+				.toBe('http://container.app/podlet-app/static/js/main.js');
+
+			done();
+		});
+	});
+
+	it('should ensure slashe before asset-path', (done) => {
+		withCurrentLocation('http://container.app/appname', () => {
+			expect(Utils.makeAbsolute('appname', 'podlet-app/static/js/main.js'))
+				.toBe('http://container.app/podlet-app/static/js/main.js');
+
+			done()
+		});
+	});
 });

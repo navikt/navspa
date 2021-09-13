@@ -28,7 +28,10 @@ I parent-app kan man så gjøre følgende;
 ```typescript jsx
 import NAVSPA from '@navikt/navspa';
 const Child1 = NAVSPA.importer<ChildProps>('child1');
-const Child2 = NAVSPA.importer<ChildProps>('child2', 'wrapper-classname');
+const Child2 = NAVSPA.importer<ChildProps>('child2', {
+    wrapperClassName: 'wrapper-classname',
+    feilmelding: <Alertstripe>Feil ved innlasting av child2</Alertstripe>
+});
 
 function Wrapper() {
   return (
@@ -56,7 +59,10 @@ const AsyncChild2 = AsyncNavspa.importer<ChildProps>({
     appName: 'child-2',
     appBaseUrl: 'https://url-to-microfrontend2.com/',
     assetManifestParser:  (manifest: { [k: string]: any }) => {/*...*/},
-    wrapperClassName: 'wrapper-classname',
+    config: {
+        wrapperClassName: 'wrapper-classname',
+        feilmelding: <Alertstripe>Feil ved innlasting av child-2</Alertstripe>
+    },
     loader: (<div>Laster child 2...</div>),
 });
 
