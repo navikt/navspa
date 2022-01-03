@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as Feilmelding from './feilmelding';
+import { createCustomEvent } from './utils';
 
 interface DeprecatedNAVSPAScope {
 	[name: string]: DeprecatedNAVSPAApp;
@@ -24,6 +25,7 @@ type NAVSPAApp = {
 
 export const scope: DeprecatedNAVSPAScope = (global as any)['NAVSPA'] = (global as any)['NAVSPA'] || {}; // tslint:disable-line
 export const scopeV2: NAVSPAScope = (global as any)['NAVSPA-V2'] = (global as any)['NAVSPA-V2'] || {}; // tslint:disable-line
+export const exportEvent: string = 'NAVSPA-eksporter';
 
 export function eksporter<PROPS>(name: string, component: React.ComponentType<PROPS>) {
 	scope[name] = (element: HTMLElement, props: PROPS) => {
@@ -37,6 +39,7 @@ export function eksporter<PROPS>(name: string, component: React.ComponentType<PR
 			ReactDOM.unmountComponentAtNode(element);
 		}
 	}
+	document.dispatchEvent(createCustomEvent(exportEvent, name));
 }
 
 export function importer<P>(name: string, config?: NAVSPAAppConfig): React.ComponentType<P> {
