@@ -1,12 +1,17 @@
 import 'isomorphic-fetch';
-jest.mock(
-    'loadjs',
-    () => jest.fn().mockReturnValue(Promise.resolve())
-);
-import { loadAssets, fetchAssetUrls } from '../src/async/async-navspa';
-import { microfrontend, withFetchMock, withCurrentLocation } from "./test.utils";
+import loadjs from "loadjs";
+import { fetchAssetUrls, loadAssets } from '../src/async/async-navspa';
+import { microfrontend, withCurrentLocation, withFetchMock } from "./test.utils";
+
+jest.mock('loadjs');
+
+const mockedLoadjs = loadjs as jest.MockedFunction<typeof loadjs>;
 
 describe('async-navspa', () => {
+    afterEach(() => {
+        mockedLoadjs.mockClear()
+    });
+
     it('fetchAssetUrls from app from different origin', (done) => {
         const {baseUrl, manifest, manifestUrl, manifestParser} = microfrontend('http://another.io', '/pathtoapp');
 
@@ -56,18 +61,22 @@ describe('async-navspa', () => {
     });
 
     it('loadAssets should fetch assets with the help of loadjs', (done) => {
-        withFetchMock('http://dummy.io/asset-manifest.json', {},() => {
-            const status = loadAssets({
+        mockedLoadjs.mockReturnValue(Promise.resolve());
+
+        withFetchMock('http://dummy.io/asset-manifest.json', {}, async () => {
+            await loadAssets({
                 appName: 'testapp',
                 appBaseUrl: 'http://dummy.io',
-                assetManifestParser: () => []
+                assetManifestParser: () => [{ path: "http://dummy.io/index.js" }]
             });
 
-            expect(typeof status).toBe('object');
-            expect(status instanceof Promise).toBeTruthy();
-            status
-                .then(() => {}, () => fail('Promise should resolve ok'))
-                .then(done);
+            expect(mockedLoadjs).toHaveBeenCalledWith(
+                ["http://dummy.io/index.js"],
+                expect.any(String),
+                expect.any(Object)
+            );
+
+            done();
         })
     });
 });
