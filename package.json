@@ -12,7 +12,8 @@
     "test:coverage": "jest --coverage",
     "commit": "git-cz",
     "start": "parcel example/index.html",
-    "serve-cra-test": "serve -C example/cra-test"
+    "serve-cra-test": "serve -C example/cra-test",
+    "serve-esm-test": "serve -C -l 2000 example/esm-test"
   },
   "publishConfig": {
     "access": "public"
