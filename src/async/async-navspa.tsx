@@ -1,13 +1,21 @@
-import React, {ReactNode} from "react";
 import loadjs from 'loadjs';
-import {createAssetManifestParser, joinPaths} from "./utils";
-import {importer as importerSync, NAVSPAAppConfig, scope, scopeV2} from '../navspa'
-import {asyncLoadingOfDefinedApp} from "../feilmelding";
-
+import React, { ReactNode } from "react";
+import { asyncLoadingOfDefinedApp } from "../feilmelding";
+import { importer as importerSync, NAVSPAAppConfig, scope, scopeV2 } from '../navspa';
+import { createAssetManifestParser, joinPaths } from "./utils";
 
 const ASSET_MANIFEST_NAME = 'asset-manifest.json';
+
+export type Asset = {
+    path: string;
+    /**
+     * Any additional asset attributes will be set on the mounted HTMLElement.
+     * This can be used set the `rel` attribute on a link tag, or the `type` attribute on a script tag, etc.
+     */
+    [attribute: string]: string | undefined;
+};
 export type ManifestObject = { [k: string]: any };
-export type AssetManifestParser = (manifestObject: ManifestObject) => string[];
+export type AssetManifestParser = (manifestObject: ManifestObject) => Asset[];
 
 export interface PreloadConfig {
     appName: string;
@@ -24,7 +32,7 @@ function createLoadJsBundleId(appName: string): string {
     return `async_navspa_${appName}`;
 }
 
-export function fetchAssetUrls(appBaseUrl: string, assetManifestParser: AssetManifestParser): Promise<string[]> {
+export function fetchAssetUrls(appBaseUrl: string, assetManifestParser: AssetManifestParser): Promise<Asset[]> {
     return fetch(joinPaths(appBaseUrl, ASSET_MANIFEST_NAME))
         .then(res => res.json())
         .then(manifest => assetManifestParser(manifest));
@@ -40,10 +48,36 @@ export function loadAssets(config: PreloadConfig): Promise<void> {
 
         const assetManifestParser = config.assetManifestParser || createAssetManifestParser(config.appBaseUrl);
         loadingStatus[loadJsBundleId] = fetchAssetUrls(config.appBaseUrl, assetManifestParser)
-                .then((assets) => loadjs(assets, loadJsBundleId, {returnPromise: true}))
+            .then((assets) => {
+                const paths = assets.map(asset => asset.path);
+
+                return loadjs(paths, loadJsBundleId, {
+                    returnPromise: true,
+                    before: setAssetAttributes(assets)
+                });
+            });
     }
 
     return loadingStatus[loadJsBundleId];
+}
+
+/**
+ * Creates a `before`-callback to set any additional attributes on the assets before they get mounted by `loadjs`.
+ */
+function setAssetAttributes(assets: Asset[]) {
+    const assetAttributes = assets.reduce(
+        (assetAttributes: Record<string, any>, { path, ...attributes }) => {
+            assetAttributes[path] = attributes;
+            return assetAttributes;
+        },
+        {}
+    );
+
+    return (path: string, assetElement: HTMLElement) => {
+        Object.entries(assetAttributes[path]).forEach(([key, value]) => {
+            (assetElement as any)[key] = value;
+        });
+    }
 }
 
 export function preload(config: PreloadConfig) {

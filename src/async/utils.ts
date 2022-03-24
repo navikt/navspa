@@ -3,7 +3,7 @@ import { AssetManifestParser, ManifestObject } from './async-navspa';
 export function createAssetManifestParser(appBaseUrl: string): AssetManifestParser {
 	return (manifestObject: ManifestObject) => {
 		const pathsToLoad = extractPathsFromCRAManifest(manifestObject);
-		return pathsToLoad.map(path => makeAbsolute(appBaseUrl, path));
+		return pathsToLoad.map(path => ({ path: makeAbsolute(appBaseUrl, path) }));
 	};
 }
 

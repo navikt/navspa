@@ -14,8 +14,9 @@ describe('async-navspa', () => {
             withFetchMock(manifestUrl, manifest, async () => {
                 const assets = await fetchAssetUrls(baseUrl, manifestParser);
 
-                expect(assets).toHaveLength(1);
-                expect(assets[0]).toBe(`http://another.io/pathtoapp/static/js/main.js`)
+                expect(assets).toEqual([
+                    { path: 'http://another.io/pathtoapp/static/js/main.js' }
+                ]);
 
                 done();
             })
@@ -29,8 +30,9 @@ describe('async-navspa', () => {
             withFetchMock(manifestUrl, manifest, async () => {
                 const assets = await fetchAssetUrls(baseUrl, manifestParser);
 
-                expect(assets).toHaveLength(1);
-                expect(assets[0]).toBe(`http://dummy.io/anotherapp/static/js/main.js`)
+                expect(assets).toEqual([
+                    { path: 'http://dummy.io/anotherapp/static/js/main.js' }
+                ])
 
                 done();
             });
@@ -44,8 +46,9 @@ describe('async-navspa', () => {
             withFetchMock(manifestUrl, manifest, async () => {
                 const assets = await fetchAssetUrls(baseUrl, manifestParser);
 
-                expect(assets).toHaveLength(1);
-                expect(assets[0]).toBe(`http://dummy.io/anotherapp/static/js/main.js`)
+                expect(assets).toEqual([
+                    { path: 'http://dummy.io/anotherapp/static/js/main.js' }
+                ]);
 
                 done();
             })

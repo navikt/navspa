@@ -40,8 +40,8 @@ describe('extractPathsFromCRAManifest', () => {
 		const manifestUrls = createAssetManifestParser('http://localhost:1234')(testManifest);
 
 		const expectedUrls = [
-			'http://localhost:1234/veilarbdemo/static/css/main.css',
-			'http://localhost:1234/veilarbdemo/static/js/main.js'
+			{ path: 'http://localhost:1234/veilarbdemo/static/css/main.css' },
+			{ path: 'http://localhost:1234/veilarbdemo/static/js/main.js' }
 		];
 
 		expect(manifestUrls).toStrictEqual(expectedUrls);
