@@ -1,1 +1,1 @@
-export const message = "Hello from ES Module!";
+export const message = "Innhold fra ESM App";

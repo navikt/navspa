@@ -1,3 +1,4 @@
 {
-    "index": "index.js"
+    "index": "index.js",
+    "style": "index.css"
 }

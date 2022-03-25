@@ -1,4 +1,4 @@
-.APP_CRA_OK:before {
+.APP_ESM_OK:before {
     content: "[OK] ";
     color: #006600;
 }

@@ -2,7 +2,7 @@ import { message } from "./message.js";
 
 window["NAVSPA-V2"]["esm-test"] = {
     mount(element) {
-        element.innerHTML = `<h1>${message}</h1>`;
+        element.innerHTML = `<p class="APP_ESM_OK">${message}</p>`;
     },
     unmount(element) {
         element.innerHTML = '';
