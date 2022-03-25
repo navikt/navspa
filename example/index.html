@@ -12,6 +12,7 @@
 
         // Deprecated oppsett
         window['NAVSPA'].oldapp = (element, props) => {
+            element.innerHTML = '';
             const header = document.createElement('h1');
             header.textContent = `Hello ${props.appname} from old`;
             element.appendChild(header);

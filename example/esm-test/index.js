@@ -5,6 +5,6 @@ window["NAVSPA-V2"]["esm-test"] = {
         element.innerHTML = `<h1>${message}</h1>`;
     },
     unmount(element) {
-        element.remove();
+        element.innerHTML = '';
     }
 };
