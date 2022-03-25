@@ -2,7 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+
     <title>Example</title>
+    <style>
+        #root {
+            padding: 1rem;
+        }
+        .with-ok-prefix:before {
+            content: "[OK] ";
+            color: #006600;
+        }
+        .blokk-m {
+            margin-bottom: 1rem;
+        }
+    </style>
     <link rel="stylesheet" href="https://navikt.github.io/internarbeidsflatedecorator/v2.1/static/css/main.css" />
     <script src="https://navikt.github.io/internarbeidsflatedecorator/v2.1/static/js/head.v2.min.js"></script>
 
@@ -13,8 +26,9 @@
         // Deprecated oppsett
         window['NAVSPA'].oldapp = (element, props) => {
             element.innerHTML = '';
-            const header = document.createElement('h1');
-            header.textContent = `Hello ${props.appname} from old`;
+            const header = document.createElement('p');
+            header.classList.add('with-ok-prefix');
+            header.textContent = `Innhold fra application eksportert med deprecated oppsett`;
             element.appendChild(header);
         }
 
@@ -22,8 +36,9 @@
         window['NAVSPA-V2'].newapp = {
             mount: (element, props) => {
                 element.innerHTML = '';
-                const header = document.createElement('h1');
-                header.textContent = `Hello ${props.appname} from new`;
+                const header = document.createElement('p');
+                header.classList.add('with-ok-prefix');
+                header.textContent = `Innhold fra application eksportert med standard oppsett`;
                 element.appendChild(header);
             },
             unmount: (element) => {

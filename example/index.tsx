@@ -10,7 +10,7 @@ const Dekorator = Navspa.importer<DecoratorProps>('internarbeidsflatefs');
 const OldApp = Navspa.importer<DecoratorProps>('oldapp');
 const NewApp = Navspa.importer<DecoratorProps>('newapp');
 const ErrorApp = Navspa.importer<DecoratorProps>('errorapp', {
-	feilmelding: <h1>Stor statisk feilmelding</h1>
+	feilmelding: <p className="with-ok-prefix">Custom feilmelding ved feil innlasting</p>
 });
 
 const asyncCRAConfig: AsyncSpaConfig = {
@@ -32,6 +32,9 @@ const asyncESMConfig: AsyncSpaConfig = {
 			{
 				path: `http://localhost:2000/${manifest.index}`,
 				type: "module"
+			},
+			{
+				path: `http://localhost:2000/${manifest.style}`
 			}
 		]
 	},
@@ -56,14 +59,20 @@ function App() {
 
 	return (
 		<>
-			<h1>Mount testing</h1>
-			<button onClick={() => setMount((p) => !p)}>Toogle mount</button>
-			{mount && <Dekorator appname="world" />}
+			<h1>NAVSPA - Testpage</h1>
+			<button className="blokk-m" onClick={() => setMount((p) => !p)}>
+				Vis/Skjul applikasjoner
+			</button>
+
+			<h2>Sync applikasjoner: {mount ? 'Vises' : 'Skjult'}</h2>
+			{mount && <ErrorApp appname="error" />}
 			{mount && <OldApp appname="world" />}
 			{mount && <NewApp appname="world" />}
+			{mount && <Dekorator appname="world" />}
+
+			<h2>Async applikasjoner: {mount ? (mountAsync ? 'Vises' : 'Laster') : 'Skjult'}</h2>
 			{mountAsync && mount && <AsyncCRAApp />}
 			{mountAsync && mount && <AsyncESMApp />}
-			<ErrorApp appname="error" />
 		</>
 	);
 }
