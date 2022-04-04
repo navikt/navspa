@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "target": "es5",
+    "module": "commonjs",
+    "lib": ["es2015", "dom"],
+    "strict": true,
+    "sourceMap": true,
+    "declaration": true,
+    "allowSyntheticDefaultImports": true,
+    "declarationDir": "./dist",
+    "outDir": "./dist/",
+    "jsx": "react",
+    "esModuleInterop": true,
+    "typeRoots": ["node_modules/@types"],
+    "baseUrl": ".",
+    "paths": {
+      "react": ["node_modules/@types/react"],
+      "react-dom": ["node_modules/@types/react-dom"]
+    }
+  },
+  "include": [
+    "src"
+  ]
+}
