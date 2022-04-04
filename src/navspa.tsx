@@ -1,7 +1,7 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import * as Feilmelding from './feilmelding';
 import { createCustomEvent, getGlobal } from './utils';
+import { ReactAdapter, React18Adapter } from "./react-adapter";
 
 interface DeprecatedNAVSPAScope {
 	[name: string]: DeprecatedNAVSPAApp;
@@ -23,6 +23,11 @@ type NAVSPAApp = {
 	unmount(element: HTMLElement): void;
 }
 
+let reactAdapter: ReactAdapter = new React18Adapter();
+export function setAdapter(adapter: ReactAdapter) {
+	reactAdapter = adapter;
+}
+
 const globalScope = getGlobal();
 export const scope: DeprecatedNAVSPAScope = globalScope['NAVSPA'] = globalScope['NAVSPA'] || {};
 export const scopeV2: NAVSPAScope = globalScope['NAVSPA-V2'] = globalScope['NAVSPA-V2'] || {};
@@ -30,14 +35,14 @@ export const exportEvent: string = 'NAVSPA-eksporter';
 
 export function eksporter<PROPS>(name: string, component: React.ComponentType<PROPS>) {
 	scope[name] = (element: HTMLElement, props: PROPS) => {
-		ReactDOM.render(React.createElement(component, props), element);
+		reactAdapter.render(React.createElement(component, props), element);
 	};
 	scopeV2[name] = {
 		mount(element: HTMLElement, props: PROPS) {
-			ReactDOM.render(React.createElement(component, props), element);
+			reactAdapter.render(React.createElement(component, props), element);
 		},
 		unmount(element: HTMLElement) {
-			ReactDOM.unmountComponentAtNode(element);
+			reactAdapter.unmount(element);
 		}
 	}
 	document.dispatchEvent(createCustomEvent(exportEvent, name));
@@ -59,7 +64,7 @@ export function importer<P>(name: string, config?: NAVSPAAppConfig): React.Compo
 		app = {
 			mount: scope[name],
 			unmount(element: HTMLElement) {
-				ReactDOM.unmountComponentAtNode(element);
+				reactAdapter.unmount(element);
 			}
 		};
 	}
