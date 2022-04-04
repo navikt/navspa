@@ -132,5 +132,64 @@ gjøre utvikling av løsningen enklere.
 </body>
 ```
 
+### Bruk med vitejs
+Om man bruker vitejs for eksportering av applikasjonen sin må man passe på at manifestet blir gitt riktig navn, e.g `asset-manifest.json`.
+Dette kan gjøres ved hjelp av følgende config:
+```typescript
+// vite.config.ts
+export default defineConfig({
+    build: {
+        manifest: 'asset-manifest.json'
+    }
+});
+```
+
+For konsumering av applikasjoner eksportert med vitejs bør man sikre at man har `@navikt/navspa >= 5.0.1`, 
+og huske å definere en `assetManifestParser` om man laster applikasjonen asynkront.
+
+```typescript
+const asyncViteApp: AsyncSpaConfig = {
+    appName: 'async-vite-app',
+    appBaseUrl: 'http://url.to.your.app',
+    assetManifestParser(manifest: Manifest) {
+        const { file, css } = manifest['index.html'];
+        const baseUrl = 'http://url.to.your.app';
+        
+        const script = { type: 'module', path: `${baseUrl}/${file}` };
+        const styles = css.map((path) => ({ path: `${baseUrl}/${path}` }));
+        
+        return [ script, ...styles ];
+    }
+}
+```
+**NB!!** basert på applikasjonen man laster inn så kan det være behov for å lage en mer generisk assetmanifestparser.
+
+### Bruk av react@<18.0.0
+
+`react-dom@18.0.0` innførte en endring i api for rendering, som påvirker dette biblioteket. 
+Som default antar NAVSPA at applikasjonen bruker `react-dom@^18`. 
+Om man skal eksportere en applikasjon som bruker en react versjon eldre enn dette må man manuelt konfigurere NAVSPA til å håndtere dette.
+
+```typescript
+import { ReactElement } from "react";
+import ReactDOM from 'react-dom';
+
+NAVSPA.setAdapter({
+    render<P>(component: ReactElement<P>, element: HTMLElement) {
+        ReactDOM.render(component, element);
+    },
+    unmount(element: HTMLElement) {
+        ReactDOM.unmountComponentAtNode(element);
+    }
+});
+```
+
+[//]: # (Om vi merker behovet kan evt denne pakken publiseres for å gjøre det enklere)
+[//]: # (```typescript)
+
+[//]: # (NAVSPA.setAdapter&#40;new React17Adapter&#40;&#41;&#41;;)
+
+[//]: # (```)
+
 ## Inqueries
 For inquries please create a GitHub-issue. For NAV internal inqueries please contact Team Personoversikt on slack at #personoversikt-intern
