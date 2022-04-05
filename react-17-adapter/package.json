@@ -1,5 +1,5 @@
 {
-  "name": "@navikt/navspa-react-17",
+  "name": "@navikt/navspa-react-17-adapter",
   "version": "0.0.1",
   "description": "NAVSPA adapter for react 17",
   "repository": "github:navikt/navspa",
@@ -7,9 +7,7 @@
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
-    "test": "jest",
-    "test:coverage": "jest --coverage"
+    "build": "tsc"
   },
   "publishConfig": {
     "access": "public"
@@ -17,7 +15,7 @@
   "author": "NAV",
   "license": "MIT",
   "peerDependencies": {
-    "@navikt/navspa": "^5.0.1",
+    "@navikt/navspa": ">=5.0.1",
     "react": ">=16.6.0",
     "react-dom": ">=16.6.0"
   },
