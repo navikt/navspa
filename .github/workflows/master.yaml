@@ -5,6 +5,7 @@ on:
     branches:
       - 'master'
     paths-ignore:
+      - '.github/workflows/adapter-release.yaml'
       - 'react-17-adapter/**'
       - 'example/**'
 
