@@ -184,12 +184,12 @@ NAVSPA.setAdapter({
 });
 ```
 
-[//]: # (Om vi merker behovet kan evt denne pakken publiseres for å gjøre det enklere)
-[//]: # (```typescript)
+Eventuelt kan man bruke pakken `@navikt/navspa-react-17-adapter` og følgende konfigurasjon:
+```typescript
 
-[//]: # (NAVSPA.setAdapter&#40;new React17Adapter&#40;&#41;&#41;;)
+NAVSPA.setAdapter(new React17Adapter());
 
-[//]: # (```)
+```
 
 ## Inqueries
 For inquries please create a GitHub-issue. For NAV internal inqueries please contact Team Personoversikt on slack at #personoversikt-intern
