@@ -1,12 +1,11 @@
-name: Test, build and publish
+name: Test, build and publish adapters
 
 on:
   push:
     branches:
       - 'master'
-    paths-ignore:
+    paths:
       - 'react-17-adapter/**'
-      - 'example/**'
 
 env:
   CI: true
@@ -20,13 +19,19 @@ jobs:
         with:
           node-version: 16
           cache: npm
+      - name: Build core
+        run: |
+          npm ci
+          npm test
+          npm run build
       - name: Install dependencies
+        working-directory: ./react-17-adapter
         run: npm ci
-      - name: Test
-        run: npm run test:coverage
       - name: Build
+        working-directory: ./react-17-adapter
         run: npm run build
       - name: Publish
+        working-directory: ./react-17-adapter
         run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

@@ -44,6 +44,16 @@ const asyncESMConfig: AsyncSpaConfig = {
 };
 const AsyncESMApp = AsyncNavspa.importer(asyncESMConfig);
 
+const react18Config: AsyncSpaConfig = {
+	appName: 'react-18-app',
+	appBaseUrl: 'http://localhost:2001',
+	loader: (<div>Laster...</div>),
+	config: {
+		feilmelding: <h1>Kunne ikke laste inn react18-test</h1>
+	}
+};
+const React18App = AsyncNavspa.importer(react18Config);
+
 function App() {
 	const [mount, setMount] = React.useState<boolean>(true);
 	const [mountAsync, setMountAsync] = React.useState<boolean>(false);
@@ -73,6 +83,7 @@ function App() {
 			<h2>Async applikasjoner: {mount ? (mountAsync ? 'Vises' : 'Laster') : 'Skjult'}</h2>
 			{mountAsync && mount && <AsyncCRAApp />}
 			{mountAsync && mount && <AsyncESMApp />}
+			{mountAsync && mount && <React18App />}
 		</>
 	);
 }
