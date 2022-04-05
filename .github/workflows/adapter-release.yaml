@@ -32,7 +32,7 @@ jobs:
         run: npm run build
       - name: Publish
         working-directory: ./react-17-adapter
-        run: npx semantic-release
+        run: npx semantic-release --tag-format "adapter-v${version}"
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           NPM_TOKEN: ${{secrets.NPM_TOKEN}}
