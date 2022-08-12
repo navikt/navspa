@@ -191,5 +191,9 @@ NAVSPA.setAdapter(new React17Adapter());
 
 ```
 
-## Inqueries
-For inquries please create a GitHub-issue. For NAV internal inqueries please contact Team Personoversikt on slack at #personoversikt-intern
+## Inquiries
+For inquiries 
+
+[Team Personoversikt](https://github.com/navikt/info-team-personoversikt-english)
+
+Or create an github-issue.
