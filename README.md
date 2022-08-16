@@ -191,9 +191,8 @@ NAVSPA.setAdapter(new React17Adapter());
 
 ```
 
-## Inquiries
-For inquiries 
+## Henvendelser
 
-[Team Personoversikt](https://github.com/navikt/info-team-personoversikt-english)
+Spørsmål knyttet til koden eller prosjektet kan rettes mot:
 
-Or create an github-issue.
+[Team Personoversikt](https://github.com/navikt/info-team-personoversikt)
