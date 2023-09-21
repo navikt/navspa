@@ -13,6 +13,12 @@ env:
   CI: true
 jobs:
   test-build-publish:
+    permissions:
+      contents:
+        - read
+        - write 
+      metadata:
+        - read
     name: Test and build
     runs-on: ubuntu-latest
     steps:
