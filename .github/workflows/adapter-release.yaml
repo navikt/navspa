@@ -12,14 +12,17 @@ env:
   CI: true
 jobs:
   test-build-publish:
+    permissions:
+      contents: write
     name: Test and build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           cache: npm
+          registry-url: https://npm.pkg.github.com
       - name: Build core
         run: |
           npm ci
@@ -35,5 +38,5 @@ jobs:
         working-directory: ./react-17-adapter
         run: npx semantic-release
         env:
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-          NPM_TOKEN: ${{secrets.NPM_TOKEN}}
