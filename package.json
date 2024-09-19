@@ -16,7 +16,7 @@
       "require": "./dist/navspa.umd.cjs"
     }
   },
-  "typings": "./dist/index.d.ts",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "build": "vite build",
     "test": "vitest",
