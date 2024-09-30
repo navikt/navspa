@@ -10,7 +10,7 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, "src/index.ts"),
       name: "NAVSpa",
-      fileName: "navspa",
+      fileName: "index",
     },
     rollupOptions: {
       external: ["react", "react-dom"],
