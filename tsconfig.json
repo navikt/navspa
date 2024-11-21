@@ -10,7 +10,7 @@
     "allowSyntheticDefaultImports": true,
     "declarationDir": "./dist",
     "outDir": "./dist/",
-    "jsx": "react",
+    "jsx": "react-jsx",
     "esModuleInterop": true,
     "typeRoots": ["node_modules/@types"]
   },
