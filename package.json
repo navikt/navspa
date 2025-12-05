@@ -1,6 +1,6 @@
 {
   "name": "@navikt/navspa",
-  "version": "7.0.0",
+  "version": "7.2.0",
   "description": "Bibliotek for eksportering og importering av hele applikasjoner som react-komponetner.",
   "repository": "github:navikt/navspa",
   "homepage": "https://github.com/navikt/navspa",
