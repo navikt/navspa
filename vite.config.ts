@@ -13,12 +13,13 @@ export default defineConfig({
       fileName: "index",
     },
     rollupOptions: {
-      external: ["react", "react-dom", "react/jsx-runtime"],
+      external: ["react", "react-dom","react-dom/client", "react/jsx-runtime"],
       output: {
         globals: {
           react: "React",
           "react/jsx-runtime": "react/jsx-runtime",
           "react-dom": "ReactDOM",
+          "react-dom/client": "ReactDOM",
         },
       },
     },
